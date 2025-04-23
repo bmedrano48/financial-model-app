@@ -33,16 +33,24 @@ def run_income_statement_simulation(start_revenue, growth_input, gross_margin, s
         sga = [r * sga_pct for r in revenue]
         ebitda = [g - s for g, s in zip(gm, sga)]
 
-        df = pd.DataFrame({
-            "Year": list(range(1, 11)),
+        # Create tidy DataFrame (row = metric, col = Year)
+        data = {
             "Revenue": revenue,
             "Growth Rate": [None] + growth_rates,
             "COGS": cogs,
             "Gross Margin": gm,
             "SG&A": sga,
             "EBITDA": ebitda
-        })
-        simulations.append(df)
+        }
+
+        df = pd.DataFrame(data)
+        df.index = [f"Year {i}" for i in range(1, 11)]
+        df_tidy = df.transpose()
+
+        # Format numbers to 1 decimal with commas for presentation
+        df_formatted = df_tidy.applymap(lambda x: f"{x:,.1f}" if pd.notnull(x) else "")
+
+        simulations.append(df_formatted)
 
     return simulations
 
