@@ -46,7 +46,16 @@ if run_button:
         )
 
     st.subheader("Income Statement (First Simulation)")
-    st.dataframe(simulations[0])
+    df = simulations[0].copy()
+
+    # Format values
+    df_numeric = df.drop(columns=["Year"])
+    df_formatted = df_numeric.applymap(lambda x: f"{x:,.1f}" if pd.notnull(x) else "")
+    df_formatted.insert(0, "Metric", df_numeric.columns)
+    df_transposed = df_formatted.set_index("Metric").transpose()
+    df_transposed.index = [f"Year {i}" for i in range(1, 11)]
+
+    st.dataframe(df_transposed)
 
     exit_values, ebitda_values = [], []
     for sim in simulations:
