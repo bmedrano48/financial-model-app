@@ -65,6 +65,11 @@ def calculate_waterfall(tev, exit_year):
     df["Invested Capital"] = [class_f["capital"], class_e["capital"], class_b["capital"], class_a["capital"]]
     df["ROI"] = df["Proceeds"] / df["Invested Capital"]
 
+    # Format numbers with thousand comma separators and 1 decimal place
+    df["Proceeds"] = df["Proceeds"].apply(lambda x: f"{x:,.1f}")
+    df["Invested Capital"] = df["Invested Capital"].apply(lambda x: f"{x:,.1f}")
+    df["ROI"] = df["ROI"].apply(lambda x: f"{x:,.1f}")
+
     # Shareholder Ownership
     key_shareholder = {
         "Class F": 0.301,
@@ -75,5 +80,8 @@ def calculate_waterfall(tev, exit_year):
     shareholder_proceeds = sum(
         dist.get(cls, 0) * pct for cls, pct in key_shareholder.items()
     )
+
+    # Format shareholder proceeds
+    shareholder_proceeds = f"{shareholder_proceeds:,.1f}"
 
     return df, shareholder_proceeds
